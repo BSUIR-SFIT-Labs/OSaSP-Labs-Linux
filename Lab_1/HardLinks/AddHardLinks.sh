@@ -1,19 +1,11 @@
 #!/bin/bash
 
-fileExtension="$1"
-directory="$2"
+IFS=$'\n'
+ERR="/tmp/errors.log"
+exec 3>&2 2>$ERR
 
-if [[ -d $directory ]];
-then
-    files=$(find "$directory" -type f -name "*.$fileExtension")
-    
-    for file in ${files}
-    do
-        fileName=$(basename -- $file)
-        ln $file $directory$fileName
-    done
+find "$2" -type f -name "*.$1" -exec ln {} "$3${A##*/}" \;
 
-    echo "Script execution is complete!"
-else
-    echo "Directory $directory not found!"
-fi
+exec 2>&3 3>&-
+sed "s/.[a-zA-Z]*:/`basename $0`:/" < $ERR 1>&2
+rm $ERR
