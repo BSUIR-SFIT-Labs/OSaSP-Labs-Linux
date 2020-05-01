@@ -24,7 +24,7 @@ int ProcFile (char *path)
 
     if (file == -1)
     {
-        fprintf(stderr, "%s: %s. File: %s\n", AppName, strerror(errno), path);
+        fprintf(stderr, "%d: %s: %s. File: %s\n", getpid(), AppName, strerror(errno), path);
 
         exit(-1);
     }
@@ -38,7 +38,7 @@ int ProcFile (char *path)
     {
         if (cnt == -1)
         {
-            fprintf(stderr, "%s: %s. File: %s\n", AppName, strerror(errno), path);
+            fprintf(stderr, "%d: %s: %s. File: %s\n", getpid(), AppName, strerror(errno), path);
 
             exit(-1);
         }
@@ -65,7 +65,7 @@ int ProcFile (char *path)
 
     if (close(file) == -1)
     {
-        fprintf(stderr, "%s: %s. File: %s\n", AppName, strerror(errno), path);
+        fprintf(stderr, "%d: %s: %s. File: %s\n", getpid(), AppName, strerror(errno), path);
 
         exit(-1);
     }
@@ -79,7 +79,7 @@ void Task (char *curPath)
 
     if ((curDir = opendir(curPath)) == NULL) 
     {
-        fprintf(stderr, "%s: %s. File: %s\n", AppName, strerror(errno), curPath);
+        fprintf(stderr, "%d: %s: %s. File: %s\n", getpid(), AppName, strerror(errno), curPath);
         errno = 0;
 
         return;
@@ -90,7 +90,7 @@ void Task (char *curPath)
 
     if (file == NULL)
     {
-        fprintf(stderr, "%s: %s.", AppName, strerror(errno));
+        fprintf(stderr, "%d: %s: %s.", getpid(), AppName, strerror(errno));
 
         return;
     }
@@ -113,7 +113,7 @@ void Task (char *curPath)
 
             if (lstat(file,&buf) == -1) 
             {
-                fprintf(stderr, "%s: %s. File: %s\n", AppName, strerror(errno), curPath);
+                fprintf(stderr, "%d: %s: %s. File: %s\n", getpid(), AppName, strerror(errno), curPath);
 
                 return;
             }
@@ -136,7 +136,7 @@ void Task (char *curPath)
                 switch (fork())
                 {
                     case (pid_t)-1:
-                        fprintf(stderr, "%s: %s.\n", AppName, strerror(errno));
+                        fprintf(stderr, "%d: %s: %s.\n", getpid(), AppName, strerror(errno));
                         errno = 0;
                         break;
                     case (pid_t)0:
@@ -152,7 +152,7 @@ void Task (char *curPath)
 
     if (errno != 0)
     {
-        fprintf(stderr, "%s: %s. File: %s\n", AppName, strerror(errno), curPath);
+        fprintf(stderr, "%d: %s: %s. File: %s\n", getpid(), AppName, strerror(errno), curPath);
         errno = 0;
 
         return;
@@ -160,7 +160,7 @@ void Task (char *curPath)
 
     if (closedir(curDir) == -1)
     {
-        fprintf(stderr, "%s: %s. File: %s\n", AppName, strerror(errno), curPath);
+        fprintf(stderr, "%d: %s: %s. File: %s\n", getpid(), AppName, strerror(errno), curPath);
         errno = 0;
 
         return;
@@ -194,7 +194,7 @@ int main(int argc, char**argv)
 
     if ((res = realpath(argv[1], NULL)) == NULL) 
     {
-        fprintf(stderr, "%s: %s. File: %s.\n", AppName, strerror(errno), argv[1]);
+        fprintf(stderr, "%d: %s: %s. File: %s.\n", getpid(), AppName, strerror(errno), argv[1]);
         
         return -1;
     }
